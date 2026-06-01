@@ -4,6 +4,7 @@
 from odoo import models
 
 
-class HrEmployeeBase(models.AbstractModel):
-    _name = "hr.employee.base"
-    _inherit = ["hr.employee.base", "dms.field.mixin"]
+class HrEmployee(models.Model):
+    # hr.employee.base was removed in Odoo 19; attach the DMS field mixin to
+    # hr.employee (and hr.employee.public) directly instead of the old base.
+    _inherit = ["hr.employee", "dms.field.mixin"]

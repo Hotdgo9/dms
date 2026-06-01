@@ -5,7 +5,7 @@ from odoo import fields, models
 
 
 class HrEmployeePublic(models.Model):
-    _inherit = "hr.employee.public"
+    _inherit = ["hr.employee.public", "dms.field.mixin"]
 
     is_logged = fields.Boolean(compute="_compute_is_logged", store=False)
 
