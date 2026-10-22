@@ -6,8 +6,6 @@
 import mimetypes
 import os
 import re
-import shutil
-import tempfile
 
 from odoo.tools.mimetypes import guess_mimetype
 
@@ -16,18 +14,22 @@ def check_name(name):
     """
     Check if a file name is valid.
 
+    A valid name is a single path component: not empty, not ``.`` or ``..``,
+    without ``/``, ``\\`` or NUL, and at most 255 bytes in UTF-8. The name is
+    checked as a string only; nothing is created on disk.
+
     :param str name: The file name to check.
     :return: True if the file name is valid, False otherwise.
     :rtype: bool
     """
-    tmp_dir = tempfile.mkdtemp()
-    try:
-        open(os.path.join(tmp_dir, name), "a").close()
-    except OSError:
+    if not name or name in (".", ".."):
         return False
-    finally:
-        shutil.rmtree(tmp_dir)
-    return True
+    if any(char in name for char in ("/", "\\", "\0")):
+        return False
+    try:
+        return len(name.encode("utf-8")) <= 255
+    except UnicodeEncodeError:
+        return False
 
 
 def compute_name(name, suffix, escape_suffix):
